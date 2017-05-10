@@ -9,7 +9,7 @@ LFLAGS = -L/usr/lib/mysql -lmysqlclient
 
 all: main
 
-winedb: main.o dbconnect.o wine.o
+main: main.o dbconnect.o wine.o
 	$(CC) main.o wine.o dbconnect.o -o main $(LFLAGS)
 
 dbconnect.o: dbconnect.cpp

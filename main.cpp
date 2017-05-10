@@ -1,4 +1,4 @@
-
+// main.cpp
 #include <iostream>
 #include <typeinfo>
 #include "LinkedList.hpp"
@@ -136,24 +136,34 @@ int main()
   while ((row = mysql_fetch_row(res)) !=NULL)
   {
     // convert (wineName) char * to string
+    std::string wineName(row[0]);
+    /*
     istringstream sWN(row[0]);
     string wineName;
     sWN >> wineName;
+    */
 
     // convert char * to int
     int wineYear = atoi(row[1]);
 
-    int wIneRating = atoi(row[2]);
+    int wineRating = atoi(row[2]);
 
-    // convert char * to double  
+    // convert char * to double
+    std::string wineType(row[4]);
+    /* 
+    istringstream sWR(row[3]);
+    string winePrice;
+    sWR >> winePrice; 
+    */
 
     // convert (wineType) char * to string
-    istringstream sWT(row[4]);
-    string wineType;
-    sWN >> wineType;
+    
+    istringstream sWT(row[3]);
+    double winePrice;
+    sWT >> winePrice;
 
     // w.setInfo(row[0], row[1], row[2], row[3], row[4]);
-    w.setInfo(wineName, wineYear, wineRating, winePrice, WineType);    
+    w.setInfo(wineName, wineYear, wineRating, winePrice, wineType);    
     wineList.insertAtFront( w , z);
     z++; 
   }
