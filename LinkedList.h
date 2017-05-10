@@ -1,4 +1,4 @@
-// listNode.h
+// LinkedList.h
 #include <iostream>
 #include <typeinfo>
 

@@ -3,6 +3,17 @@
 #include <typeinfo>
 #include "LinkedList.hpp"
 #include "person.h"
+#include <mysql.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <iostream>
+#include <iomanip>
+#include <string.h>
+#include <sstream>
+#include "dbconnect.h"
+#include "wine.h"
+
+
 
 using namespace std;
 
@@ -55,7 +66,8 @@ int main()
 	 * into the linked list
 	 * */
 	 
-	 
+	 /*
+   // Person LinkedList IE
    Person p;
    List< Person > personList;
  
@@ -76,7 +88,100 @@ int main()
 
    personList.removeFromFront(p);  // remove the first node
    printNoteInfo (personList);  
-   
+   */
+
+
+  // mySQL implementation
+  MYSQL *conn;    // the connection
+  MYSQL_RES *res; // the results
+  MYSQL_ROW row;  // the results row (line by line)
+  char* sqlcmd;
+  string s;
+  ostringstream oss;
+  
+  // Wine LinkedList
+  Wine w;
+  List< Wine > wineList;
+
+  struct connection_details mysqlD;
+  mysqlD.server = (char *)"localhost";  // where the mysql database is
+  mysqlD.user = (char *)"root";   // the root user of mysql 
+  mysqlD.password = (char *)"password"; // the password of the root user in mysql
+  mysqlD.database = (char *)"wine"; // the databse to pick
+ 
+  // connect to the mysql database
+  conn = mysql_connection_setup(mysqlD);
+ 
+  // assign the results return to the MYSQL_RES pointer
+  
+     // use wine database
+     res = mysql_perform_query(conn, (char *)"use wine");
+     // get me all the wines with these categories
+     res = mysql_perform_query(conn, (char *)"select name, vintage, score, price, type from wineInfo");
+     /*
+      * you need to print out the header.  Make sure it it 
+      * nicely formated line up.  Modify the cout statement
+      * below so the header is nicely line up.  Hint: use left and setw
+      * 
+      * WineName   Vintage  Rating  Price  Type
+      * */
+     cout << left << setw(30) <<"Wine Name" <<
+                        left << setw(15) << "Vintage" <<
+             left << setw(15) << "Rating" <<
+             left << setw(15) << "Price"  <<
+             left << setw(15) << "Type"
+   << endl;
+  
+  int z = 0;
+  while ((row = mysql_fetch_row(res)) !=NULL)
+  {
+    // convert (wineName) char * to string
+    istringstream sWN(row[0]);
+    string wineName;
+    sWN >> wineName;
+
+    // convert char * to int
+    int wineYear = atoi(row[1]);
+
+    int wIneRating = atoi(row[2]);
+
+    // convert char * to double  
+
+    // convert (wineType) char * to string
+    istringstream sWT(row[4]);
+    string wineType;
+    sWN >> wineType;
+
+    // w.setInfo(row[0], row[1], row[2], row[3], row[4]);
+    w.setInfo(wineName, wineYear, wineRating, winePrice, WineType);    
+    wineList.insertAtFront( w , z);
+    z++; 
+  }
+
+  printNoteInfo(wineList);
+
+  //  print all those wines outs 
+   /*
+  while ((row = mysql_fetch_row(res)) !=NULL)
+  {
+   cout << setw(32) << left << row[0] << setfill(' ') // coulumn (field) #1 - Wine Name
+     << setw(15) << row[1] << setfill(' ') // field #2 - Vintage
+     << setw(15) << row[2] << setfill(' ') // field #3 - Rating
+    << setw(13) << row[3] << setfill(' ') // field #4 - Price
+    << setw(10) << row[4] << setfill(' ') // field #5 - Wine type
+    << endl; // field #7 - UPC
+  }
+  */
+  /* clean up the database result set */
+  mysql_free_result(res);
+  /* clean up the database link */
+  mysql_close(conn);
+ 
+  return 0;
+
+
+
+
 } // end main
 
 
