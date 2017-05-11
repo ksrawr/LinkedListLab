@@ -95,7 +95,7 @@ void List< NODETYPE >::insertAtBack( const NODETYPE &value, int key)
   	firstPtr = lastPtr = newPtr;
   else
   {
-  	newPtr->nextPtr = lastPtr;
+  	lastPtr->nextPtr = newPtr;
   	lastPtr = newPtr;
   }
   
@@ -243,9 +243,9 @@ NODETYPE * List< NODETYPE >::getInfo(int myKey)
 
    while ( currentPtr != 0 ) // display elements in list
    {
-        if (currentPtr->key == myKey ) { // found
+        //if (currentPtr->key == myKey ) { // found
            return (& currentPtr->data);
-        }
+        //}
  
       currentPtr = currentPtr->nextPtr;
    } // end while
@@ -259,7 +259,7 @@ template< typename NODETYPE >
 void printNoteInfo (  List< NODETYPE > & nodeList)
 {   
    NODETYPE *wp;
-   wp = (NODETYPE *) nodeList.getInfo(537542254); //get node based on key
+   wp = (NODETYPE *) nodeList.getInfo(0); //get node based on key
    wp->printInfo();
  
  
