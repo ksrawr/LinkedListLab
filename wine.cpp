@@ -5,8 +5,7 @@ Wine::Wine()
 {
 }
 
-Wine::Wine(string n, int v,
-int s, double p, string t)
+Wine::Wine(string n, int v, int s, double p, string t)
 {
 	name = n;
 	vintage = v;
@@ -15,8 +14,7 @@ int s, double p, string t)
 	type = t;
 }
 
-void Wine::setInfo(string n, int v,
-int s, double p, string t)
+void Wine::setInfo(string n, int v, int s, double p, string t)
 {
 	name = n;
 	vintage = v;
@@ -42,14 +40,16 @@ int Wine::getPrice() const
 
 void Wine::printInfo()
 {
-	cout << name;
-	cout << "\t" << vintage;
-	cout << "\t" << score;
-	cout << "\t" << price;
-	cout << "\t" << type;
+	cout << setw(32) << left << name << setfill(' ') // coulumn (field) #1 - Wine Name
+     << setw(15) << vintage << setfill(' ') // field #2 - Vintage
+     << setw(15) << score << setfill(' ') // field #3 - Rating
+    << setw(13) << price << setfill(' ') // field #4 - Price
+    << setw(10) << type << setfill(' ') // field #5 - Wine type
+    << endl;
 }
 
-void printPersoninfo(List< Wine > & wineList)
+/*
+void printWineinfo(List< Wine > & wineList)
 {
 	Wine * f;
 	f = (Wine *) wineList.getInfo(0);
@@ -68,3 +68,4 @@ void printPersoninfo(List< Wine > & wineList)
 		currentPtr = currentPtr->getNextptr();
 	}
 }
+*/

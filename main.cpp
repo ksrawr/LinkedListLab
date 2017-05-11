@@ -5,7 +5,7 @@
 #include "person.h"
 #include <mysql.h>
 #include <stdio.h>
-#include <stdlib.h>
+#include <cstdlib>
 #include <iostream>
 #include <iomanip>
 #include <string.h>
@@ -132,9 +132,12 @@ int main()
              left << setw(15) << "Type"
    << endl;
   
-  int z = 0;
-  while ((row = mysql_fetch_row(res)) !=NULL)
-  {
+  //int z = 0;
+
+    row = mysql_fetch_row(res);
+    int z;
+    while ((row = mysql_fetch_row(res)) !=NULL)
+    {
     // convert (wineName) char * to string
     std::string wineName(row[0]);
     /*
@@ -144,29 +147,55 @@ int main()
     */
 
     // convert char * to int
-    int wineYear = atoi(row[1]);
-
-    int wineRating = atoi(row[2]);
-
+    std::stringstream sWY(row[1]);
+    int wineYear;
+    sWY >> wineYear;
+/*
+    sstringstream strYear;
+    strYear << row[1];
+    int wineYear;
+    strYear >> wineYear;
+*/  
+    std::stringstream sWR(row[2]);
+    int wineRating;
+    sWR >> wineRating;
+/*
+    sstringstream strRating;
+    strRating << row[1];
+    int wineRating;
+    strRating >> wineRating;
+*/
     // convert char * to double
     std::string wineType(row[4]);
     /* 
     istringstream sWR(row[3]);
     string winePrice;
-    sWR >> winePrice; 
+    sWR >> winePrice; s
     */
 
     // convert (wineType) char * to string
     
-    istringstream sWT(row[3]);
+    istringstream sWP(row[3]);
     double winePrice;
-    sWT >> winePrice;
+    sWP >> winePrice;
 
+    /*
+    cout << setw(32) << left << wineName << setfill(' ') // coulumn (field) #1 - Wine Name
+     << setw(15) << wineYear << setfill(' ') // field #2 - Vintage
+     << setw(15) << wineRating << setfill(' ') // field #3 - Rating
+    << setw(13) << winePrice << setfill(' ') // field #4 - Price
+    << setw(10) << wineType << setfill(' ') // field #5 - Wine type
+    << endl;
+    */
+    w.setInfo(wineName, wineYear, wineRating, winePrice, wineType);
+    wineList.insertAtFront(w,z);
+    z++;
+    }
     // w.setInfo(row[0], row[1], row[2], row[3], row[4]);
-    w.setInfo(wineName, wineYear, wineRating, winePrice, wineType);    
-    wineList.insertAtFront( w , z);
-    z++; 
-  }
+    //w.setInfo(wineName, wineYear, wineRating, winePrice, wineType);    
+    ///wineList.insertAtFront( w , 0);
+    
+
 
   printNoteInfo(wineList);
 

@@ -10,39 +10,6 @@ using namespace std;
 
 int main()
 {
-  MYSQL *conn;    // the connection
-  MYSQL_RES *res; // the results
-  MYSQL_ROW row;  // the results row (line by line)
- 
-  struct connection_details mysqlD;
-  mysqlD.server = (char *)"localhost";  // where the mysql database is
-  mysqlD.user = (char *)"root";   // the root user of mysql 
-  mysqlD.password = (char *)"password"; // the password of the root user in mysql
-  mysqlD.database = (char *)"wine"; // the databse to pick
- 
-  // connect to the mysql database
-  conn = mysql_connection_setup(mysqlD);
-  // tell my sql "use wine"
-  res = mysql_perform_query(conn, (char *)"use wine");
-
-  // 
-  double x;
-  char *sqlcmd;
-  string s;
-  ostringsteream oss;
-  MYSQL_RES *res;
-
-  cout << "Enter Price: ";
-  cin >> x;
-  oss << "select name, type from wineInfo
-          where price > " << x;
-  s = oss.str(); // now string s holds oss
-  sqlcmd = (char *)s.c_str(); // convert sql
-  res = mysql_perform_query(conn,sqlcmd); 
-
-     /*
-
-
    int key;
    List< int > list1; // storage for first list
    List< int > list2; // storage for second list

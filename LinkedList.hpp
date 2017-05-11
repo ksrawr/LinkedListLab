@@ -69,8 +69,7 @@ List< NODETYPE >::~List()
 
 // Insert a node at the front of the list
 template< typename NODETYPE >
-void List< NODETYPE >::insertAtFront( const NODETYPE &value,
-  int key)
+void List< NODETYPE >::insertAtFront( const NODETYPE &value, int key)
 {
    ListNode<NODETYPE> *newPtr = getNewNode( value, key );
 
@@ -85,8 +84,7 @@ void List< NODETYPE >::insertAtFront( const NODETYPE &value,
 
 // Insert a node at the back of the list
 template< typename NODETYPE >
-void List< NODETYPE >::insertAtBack( const NODETYPE &value,
-  int key)
+void List< NODETYPE >::insertAtBack( const NODETYPE &value, int key)
 {
 	ListNode<NODETYPE> *newPtr = getNewNode( value, key );
   /*
@@ -158,8 +156,9 @@ bool List< NODETYPE >::removeFromBack( NODETYPE &value )
 	 * remove the last node
 	 * 
 	 * */
-	 	while(currentPtr -> nextPtr != lastPtr)
+	 	while(currentPtr -> nextPtr != lastPtr){
 	 		currentPtr = currentPtr -> nextPtr;
+    }
 	 	lastPtr = currentPtr;
 	 	currentPtr->nextPtr = NULL;
   
@@ -240,12 +239,13 @@ NODETYPE * List< NODETYPE >::getInfo(int myKey)
 
    ListNode< NODETYPE > *currentPtr = firstPtr;
 
-   cout << "The list is: ";
+   cout << "The list is: \n";
 
    while ( currentPtr != 0 ) // display elements in list
    {
-        if (currentPtr->key == myKey )  // found
+        if (currentPtr->key == myKey ) { // found
            return (& currentPtr->data);
+        }
  
       currentPtr = currentPtr->nextPtr;
    } // end while
@@ -259,7 +259,7 @@ template< typename NODETYPE >
 void printNoteInfo (  List< NODETYPE > & nodeList)
 {   
    NODETYPE *wp;
-   wp = (NODETYPE *) nodeList.getInfo(0); //get node based on key
+   wp = (NODETYPE *) nodeList.getInfo(537542254); //get node based on key
    wp->printInfo();
  
  
@@ -267,7 +267,7 @@ void printNoteInfo (  List< NODETYPE > & nodeList)
      
    currentPtr =  nodeList.getFirstPtr();
    
-   cout << "The node list is: \n";
+   cout << "\n The node list is: \n";
    //print out all the info in linked list
    while ( currentPtr != 0 ) // display elements in list
    {

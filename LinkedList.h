@@ -51,6 +51,7 @@ public:
    bool isEmpty() const;
    void print() const;
    void printPtrFunc(   );
+   void printNoteInfo(   );
    NODETYPE * getInfo(int myKey);
       // return nextPtr
    ListNode< NODETYPE >  *getFirstPtr() const 
