@@ -21,43 +21,6 @@ using namespace std;
 
 int main()
 {
-  /*
-   int key;
-   List< int > list1; // storage for first list
-   List< int > list2; // storage for second list
-  */
-
-// assign intger into first list, from 1 to 5 
-   /*
-    * Use insertAtBack function to add to linked list
-    * YOU MUST USE insertAtBack in the wine lab, so YOU NEED TO
-    * COMPLETE the insertAtBack methold.
-    * */
-/*    
-   for (int i=0; i <5;  i++)
-   {
-	  key = i;  // key is an unique value, like your ID
-    list1.insertAtBack( i, key );
- //     list1.insertAtBack( i, key ); //YOU MUST IMPLEMENT THIS FUNCTION
-   }
-   
-    
-   
-   // call function print to print the list
-   list1.print();
-*/
-   // assign from 5 to 10 into second list
-      /*
-    * Use insertAtFront function to add to linked list
-    * */
-/*    
-   for (int i=5; i<10;   i++ )
-   {
-	  key = i;  // key is an unique value, like your ID
-      list2.insertAtFront( i, key );
-   }
-   list2.print();
-*/
 
   // mySQL implementation
   MYSQL *conn;    // the connection
@@ -82,24 +45,14 @@ int main()
      // use wine database
      res = mysql_perform_query(conn, (char *)"use wine");
 
-     // get me all the wines with these categories
-     res = mysql_perform_query(conn, (char *)"select name, vintage, score, price, type from wineInfo");
-     /*
-      * you need to print out the header.  Make sure it it 
-      * nicely formated line up.  Modify the cout statement
-      * below so the header is nicely line up.  Hint: use left and setw
-      * 
-      * WineName   Vintage  Rating  Price  Type
-      * */
-    // should implement as a function in Wine
-
-    // console program
+  // console program
   int choice;
   int choiceOfOne;
   bool displayMenu = true;
 
   //option select mySQL
-  double x;
+  double xa, xb; // price 1 and price 2
+  int ya, yb; // year 1 and year 2
   char* sqlcmd;
   string s;
   ostringstream oss;
@@ -119,6 +72,8 @@ int main()
     {
       case 1:
       { 
+        res = mysql_perform_query(conn, (char *)"select name, vintage, score, price, type from wineInfo order by score, price");
+
         cout << "Selecting from the following \n";
         cout << " 1 - Display All Wines by Score and Price \n";
         cout << " 2 - Display All Wines by Score and Price, except the Last one \n";
@@ -168,6 +123,9 @@ int main()
             }
             
             printNoteInfo(wineList);
+
+            /* clean up the database result set */
+            mysql_free_result(res);
             break;
           }
           case 2:
@@ -218,6 +176,9 @@ int main()
             }
 
             printNoteInfo(wineList);
+
+            /* clean up the database result set */
+            mysql_free_result(res);
             break;
           }
         }
@@ -225,54 +186,69 @@ int main()
       }
       case 2:
       {
-        cout << "Enter Price\n";
-        cin >> x;
-        oss << "select name, type from wineInfo where price >" << x;
+        cout << "Enter Desired Price Range\n";
+        cin >> xa >> xb;
+        oss << "select name, vintage, score, price, type from wineInfo where price between " << xa << " and " << xb << " order by price";
         s = oss.str(); 
         sqlcmd = (char *)s.c_str();
         res = mysql_perform_query(conn,sqlcmd);
 
+        cout << left << setw(30) <<"Wine Name" <<
+                            left << setw(15) << "Vintage" <<
+                 left << setw(15) << "Rating" <<
+                 left << setw(15) << "Price"  <<
+                 left << setw(15) << "Type"
+            << endl;
+
+
             while ((row = mysql_fetch_row(res)) !=NULL)
             {
-            // convert (wineName) char * to string
-            std::string wineName(row[0]);
-
-            // convert char * to int
-            std::string sWY(row[1]);
-            stringstream streamYear;
-            int wineYear;
-            streamYear.str(sWY);
-            streamYear >> wineYear;
-
-            std::string sWR(row[2]);
-            stringstream streamRating;
-            int wineRating;
-            streamRating.str(sWR);
-            streamRating >> wineRating;
-
-            // convert char * to double
-            std::string wineType(row[4]);
-
-            // convert (wineType) char * to string 
-            istringstream sWP(row[3]);
-            double winePrice;
-            sWP >> winePrice;
-
-             cout << setw(15) << row[0] << left << setw(10) << " " // coulumn (field) #1 - Wine Name
-               << setw(15) << row[1] << left << "  " // field #2 - Vintage
-               << setw(15) << row[2] << left << "  " // field #3 - Rating
-              << setw(15) << row[3] << left << "  " // field #4 - Price
-              << setw(15) << row[4] << left << "  " // field #5 - Wine type
-              << endl; // field #7 - UPC
+             cout << setw(32) << left << row[0] << setfill(' ') // coulumn (field) #1 - Wine Name
+              << setw(15) << row[1] << setfill(' ') // field #2 - Vintage
+              << setw(15) << row[2] << setfill(' ') // field #3 - Rating
+              << setw(13) << row[3] << setfill(' ') // field #4 - Price
+              << setw(10) << row[4] << setfill(' ') // field #5 - Wine type
+              << endl;
             }
             /* clean up the database result set */
         mysql_free_result(res);
             /* clean up the database link */
-        mysql_close(conn);
+        break;
+      }
+      case 3:
+      {
+        cout << "Enter Year\n";
+        cin >> ya >> yb;
+        oss << "select name, vintage, score, price, type from wineInfo where vintage between " << ya << " and " << yb << " order by vintage desc, score desc";
+        s = oss.str(); 
+        sqlcmd = (char *)s.c_str();
+        res = mysql_perform_query(conn,sqlcmd);
+
+        cout << left << setw(30) <<"Wine Name" <<
+                            left << setw(15) << "Vintage" <<
+                 left << setw(15) << "Rating" <<
+                 left << setw(15) << "Price"  <<
+                 left << setw(15) << "Type"
+            << endl;
+
+
+            while ((row = mysql_fetch_row(res)) !=NULL)
+            {
+             cout << setw(32) << left << row[0] << setfill(' ') // coulumn (field) #1 - Wine Name
+              << setw(15) << row[1] << setfill(' ') // field #2 - Vintage
+              << setw(15) << row[2] << setfill(' ') // field #3 - Rating
+              << setw(13) << row[3] << setfill(' ') // field #4 - Price
+              << setw(10) << row[4] << setfill(' ') // field #5 - Wine type
+              << endl;
+            }
+            /* clean up the database result set */
+        mysql_free_result(res);
+            /* clean up the database link */
         break;
       }
       case 4:
       {
+        mysql_close(conn);
         cout << "You are now exiting... \n";
         displayMenu = false;
         break;
@@ -280,13 +256,7 @@ int main()
     } // end Switch
 
   } // end MenuDisplay
-
-  /* clean up the database result set */
-  mysql_free_result(res);
-  /* clean up the database link */
-  mysql_close(conn);
  
-  return 0;
 } // end main
 
 
