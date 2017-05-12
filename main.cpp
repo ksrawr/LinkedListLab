@@ -12,6 +12,7 @@
 #include <sstream>
 #include "dbconnect.h"
 #include "wine.h"
+#include "printMeFirst.h"
 
 
 
@@ -21,7 +22,7 @@ using namespace std;
 
 int main()
 {
-
+  printMeFirst("Kenneth Surban", "CS-116 - 2017 Spring");
   // mySQL implementation
   MYSQL *conn;    // the connection
   MYSQL_RES *res; // the results
@@ -53,13 +54,17 @@ int main()
   //option select mySQL
   double xa, xb; // price 1 and price 2
   int ya, yb; // year 1 and year 2
+  int sa, sb; // score 1 and score 2
+  int sum; 
+  int avg = 0; // average price
+  int z = 0;
   char* sqlcmd;
   string s;
   ostringstream oss;
 
   // menu selector
   while (displayMenu != false ) { 
-    cout << "\n Welcome to the 2010 Wine Finder \n";
+    cout << "\n Welcome to the Wine Finder: \n";
     cout << " 1 - Find Wines by Score and Price \n";
     cout << " 2 - Find Wines by Price \n";
     cout << " 3 - Find Wines by Vintage \n";
@@ -72,16 +77,20 @@ int main()
     {
       case 1:
       { 
-        res = mysql_perform_query(conn, (char *)"select name, vintage, score, price, type from wineInfo order by score, price");
-
         cout << "Selecting from the following \n";
-        cout << " 1 - Display All Wines by Score and Price \n";
-        cout << " 2 - Display All Wines by Score and Price, except the Last one \n";
+        cout << " 1 - Display All Wines by Score then Price \n";
+        cout << " 2 - Display All Wines by Score then Price, except the Last one \n";
         cin >> choiceOfOne;
         switch (choiceOfOne)
         {
           case 1:
-          {   
+          {
+            cout << "Enter Desired Rating\n";
+            cin >> sa >> sb;
+            oss << "select name, vintage, score, price, type from wineInfo where score between " << sa << " and " << sb << " order by price";
+            s = oss.str();  
+            sqlcmd = (char *)s.c_str();
+            res = mysql_perform_query(conn,sqlcmd);    
             cout << left << setw(30) <<"Wine Name" <<
                             left << setw(15) << "Vintage" <<
                  left << setw(15) << "Rating" <<
@@ -90,7 +99,7 @@ int main()
             << endl;
 
             row = mysql_fetch_row(res);
-            int z = 0;
+
             while ((row = mysql_fetch_row(res)) !=NULL)
             {
             // convert (wineName) char * to string
@@ -119,17 +128,38 @@ int main()
 
             w.setInfo(wineName, wineYear, wineRating, winePrice, wineType);
             wineList.insertAtBack(w,z);
+            sum = sum + winePrice;
             z++;
             }
-            
+
             printNoteInfo(wineList);
 
+            cout << "\nNumber of wines: " << z << endl;
+            avg = sum/z;
+            cout << "Average Price of wines: " << avg << endl;
+
+            // remove the elements in wineList
+            res = mysql_perform_query(conn,sqlcmd);   
+            row = mysql_fetch_row(res);
+
+            while ((row = mysql_fetch_row(res)) !=NULL)
+            {
+            wineList.removeFromBack(w);
+            }
+
+            oss.str("");
             /* clean up the database result set */
             mysql_free_result(res);
             break;
           }
           case 2:
           {
+            cout << "Enter Desired Rating\n";
+            cin >> sa >> sb;
+            oss << "select name, vintage, score, price, type from wineInfo where score between " << sa << " and " << sb << " order by price";
+            s = oss.str(); 
+            sqlcmd = (char *)s.c_str();
+            res = mysql_perform_query(conn,sqlcmd);  
             cout << left << setw(30) <<"Wine Name" <<
                             left << setw(15) << "Vintage" <<
                  left << setw(15) << "Rating" <<
@@ -141,10 +171,10 @@ int main()
             int z = 0;
             while ((row = mysql_fetch_row(res)) !=NULL)
             {
-            // convert (wineName) char * to string
+            // convert (wineName) char * to string s 
             std::string wineName(row[0]);
 
-            // convert char * to int
+            // convert char * to int 
             std::string sWY(row[1]);
             stringstream streamYear;
             int wineYear;
@@ -167,15 +197,32 @@ int main()
 
             w.setInfo(wineName, wineYear, wineRating, winePrice, wineType);
             wineList.insertAtBack(w,z);
+            sum = sum + winePrice;
             z++;
             }
             
             for(int i = 0; i < 1; i++) 
             {
               wineList.removeFromBack(w);
+              z = z - 1;
             }
 
             printNoteInfo(wineList);
+
+            cout << "Number of wines: " << z << endl;
+            avg = sum/z;
+            cout << "Average Price of wines: " << avg << endl;
+
+            // remove the elements in wineList
+            res = mysql_perform_query(conn,sqlcmd);  
+            row = mysql_fetch_row(res);
+
+            while ((row = mysql_fetch_row(res)) !=NULL)
+            {
+            wineList.removeFromBack(w);
+            }
+
+            oss.str("");
 
             /* clean up the database result set */
             mysql_free_result(res);
@@ -209,13 +256,26 @@ int main()
               << setw(13) << row[3] << setfill(' ') // field #4 - Price
               << setw(10) << row[4] << setfill(' ') // field #5 - Wine type
               << endl;
+
+              istringstream sWP(row[3]);
+              double winePrice;
+              sWP >> winePrice;
+
+              sum = sum + winePrice;
+              z++;
             }
+
+            cout << "\nNumber of wines: " << z << endl;
+            avg = sum/z;
+            cout << "Average Price of wines: " << avg << endl;
             /* clean up the database result set */
+            oss.str("");
+
         mysql_free_result(res);
             /* clean up the database link */
         break;
       }
-      case 3:
+      case 3: 
       {
         cout << "Enter Year\n";
         cin >> ya >> yb;
@@ -229,8 +289,8 @@ int main()
                  left << setw(15) << "Rating" <<
                  left << setw(15) << "Price"  <<
                  left << setw(15) << "Type"
-            << endl;
-
+            << endl;   
+ 
 
             while ((row = mysql_fetch_row(res)) !=NULL)
             {
@@ -240,10 +300,22 @@ int main()
               << setw(13) << row[3] << setfill(' ') // field #4 - Price
               << setw(10) << row[4] << setfill(' ') // field #5 - Wine type
               << endl;
+
+              istringstream sWP(row[3]);
+              double winePrice;
+              sWP >> winePrice;
+
+              sum = sum + winePrice;
+              z++;
             }
+            cout << "\nNumber of wines: " << z << endl;
+            avg = sum/z;
+            cout << "Average Price of wines: " << avg << endl;
             /* clean up the database result set */
+            oss.str("");
+
         mysql_free_result(res);
-            /* clean up the database link */
+            /* clean up the database link */ 
         break;
       }
       case 4:
@@ -252,7 +324,7 @@ int main()
         cout << "You are now exiting... \n";
         displayMenu = false;
         break;
-      }
+      } 
     } // end Switch
 
   } // end MenuDisplay
